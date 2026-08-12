@@ -22,9 +22,7 @@ function Home() {
     data,
     loading,
     error
-  } = useFetch(
-    "http://localhost:3001/restaurants"
-  );
+  } = useFetch("/restaurants.json");
 
 
   // SEARCH
