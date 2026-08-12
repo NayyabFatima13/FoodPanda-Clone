@@ -69,12 +69,10 @@ useEffect(() => {
 
 
   useEffect(() => {
-
     if (data) {
-      setRestaurants(data);
+        setRestaurants(data.restaurants);
     }
-
-  }, [data]);
+}, [data]);
 
 
   // FAVORITES
