@@ -19,7 +19,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
 
-  const { theme } = useTheme();P
+  const { theme } = useTheme();
   return (
     <BrowserRouter>
 
