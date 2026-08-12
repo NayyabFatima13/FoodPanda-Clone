@@ -3,7 +3,7 @@ import {
   useContext
 } from "react";
 
-import useLocalStorage from "../hooks/useLocalStorage";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 
 const CartContext = createContext();
