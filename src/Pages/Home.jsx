@@ -23,15 +23,31 @@ function Home() {
     loading,
     error
   } = useFetch("/restaurants.json");
-  useEffect(() => {
-  fetch('/restaurants.json')
-    .then((res) => res.json())
-    .then((data) => {
-      // Access the array property inside your JSON file
-      setRestaurants(data.restaurants || data); 
-    });
-}, []);
+ console.log("Restaurant API data:", data);
+console.log("Is array?", Array.isArray(data));
 
+useEffect(() => {
+    fetch("/restaurants.json")
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
+            }
+
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Fetched data:", data);
+
+            setData(data);
+            setLoading(false);
+        })
+        .catch((error) => {
+            console.log("Fetch error:", error);
+
+            setError(error);
+            setLoading(false);
+        });
+}, ["/restaurants.json"]);
 
   // SEARCH
   const [searchText, setSearchText] = useState("");
