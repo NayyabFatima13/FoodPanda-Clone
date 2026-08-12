@@ -23,6 +23,14 @@ function Home() {
     loading,
     error
   } = useFetch("/restaurants.json");
+  useEffect(() => {
+  fetch('/restaurants.json')
+    .then((res) => res.json())
+    .then((data) => {
+      // Access the array property inside your JSON file
+      setRestaurants(data.restaurants || data); 
+    });
+}, []);
 
 
   // SEARCH
