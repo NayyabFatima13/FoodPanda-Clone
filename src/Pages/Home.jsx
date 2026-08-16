@@ -18,42 +18,39 @@ import useDebounce from "../Hooks/useDebounce";
 function Home() {
 
   // FETCH RESTAURANTS
-  const {
-    data,
-    loading,
-    error
+  const { data, loading, error, setError
   } = useFetch("/restaurants.json");
- console.log("Restaurant API data:", data);
-console.log("Is array?", Array.isArray(data));
+  console.log("Restaurant API data:", data);
+  console.log("Is array?", Array.isArray(data));
 
-useEffect(() => {
+  useEffect(() => {
     fetch("/restaurants.json")
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch data");
-            }
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
 
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Fetched data:", data);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Fetched data:", data);
 
-            setData(data);
-            setLoading(false);
-        })
-        .catch((error) => {
-            console.log("Fetch error:", error);
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("Fetch error:", error);
 
-            setError(error);
-            setLoading(false);
-        });
-}, ["/restaurants.json"]);
+        // setError(error);
+        //setLoading(false);
+      });
+  }, ["/restaurants.json"]);
 
   // SEARCH
   const [searchText, setSearchText] = useState("");
 
-  const debouncedSearch = 
-  useDebounce(searchText, 500 );
+  const debouncedSearch =
+    useDebounce(searchText, 500);
 
 
   // FILTERS
@@ -63,6 +60,26 @@ useEffect(() => {
     cuisines: []
   });
 
+  const handleCuisineSelect = (cuisine) => {
+
+    setFilters((previousFilters) => {
+
+      const alreadySelected =
+        previousFilters.cuisines.includes(cuisine);
+
+
+      return {
+        ...previousFilters,
+
+        cuisines: alreadySelected
+          ? []
+          : [cuisine]
+      };
+
+    });
+
+  };
+
 
   // RESTAURANTS
   const [restaurants, setRestaurants] = useState([]);
@@ -70,15 +87,14 @@ useEffect(() => {
 
   useEffect(() => {
     if (data) {
-        setRestaurants(data.restaurants);
+      setRestaurants(data.restaurants);
     }
-}, [data]);
+  }, [data]);
 
 
   // FAVORITES
   const [favorites, setFavorites] =
     useLocalStorage("favorites", []);
-
 
   const handleFavorite = (id) => {
 
@@ -98,9 +114,7 @@ useEffect(() => {
       ];
 
     });
-
   };
-
 
   // SEARCH + FILTER
   let filteredRestaurants = restaurants.filter(
@@ -108,7 +122,6 @@ useEffect(() => {
 
       const search =
         debouncedSearch.toLowerCase();
-
 
       const matchesSearch =
         restaurant.name
@@ -119,18 +132,15 @@ useEffect(() => {
           .toLowerCase()
           .includes(search);
 
-
       const matchesRating =
         !filters.rating4Plus ||
         parseFloat(restaurant.rating) >= 4;
-
 
       const matchesCuisine =
         filters.cuisines.length === 0 ||
         filters.cuisines.includes(
           restaurant.cuisine
         );
-
 
       return (
         matchesSearch &&
@@ -140,7 +150,6 @@ useEffect(() => {
 
     }
   );
-
 
   // SORTING
 
@@ -153,7 +162,6 @@ useEffect(() => {
 
   }
 
-
   if (filters.sort === "Top rated") {
 
     filteredRestaurants.sort(
@@ -164,13 +172,11 @@ useEffect(() => {
 
   }
 
-
   // LOADING
 
   if (loading) {
     return <h2>Loading restaurants...</h2>;
   }
-
 
   // ERROR
 
@@ -187,7 +193,6 @@ useEffect(() => {
         setSearchText={setSearchText}
       />
 
-
       <main className="main-layout">
 
         <Sidebar
@@ -195,15 +200,16 @@ useEffect(() => {
           setFilters={setFilters}
         />
 
-
         <div className="main-content">
 
           <Banner />
 
-          <CuisineSection />
+          <CuisineSection
+            onCuisineSelect={handleCuisineSelect}
+            selectedCuisine={filters.cuisines[0]}
+          />
 
           <PromoSection />
-
 
           <RestaurantSection
             title="Most popular for groups"
@@ -211,7 +217,6 @@ useEffect(() => {
             onFavorite={handleFavorite}
             favorites={favorites}
           />
-
 
           <RestaurantSection
             title="Recommended for you"
@@ -222,18 +227,13 @@ useEffect(() => {
             favorites={favorites}
           />
 
-
           <RestaurantSection
             title="Fastest delivery"
             restaurants={
               filteredRestaurants
                 .slice()
                 .sort(
-                  (a, b) =>
-                    a.deliveryTime -
-                    b.deliveryTime
-                )
-                .slice(0, 4)
+                  (a, b) => a.deliveryTime - b.deliveryTime).slice(0, 4)
             }
             onFavorite={handleFavorite}
             favorites={favorites}
@@ -242,7 +242,6 @@ useEffect(() => {
         </div>
 
       </main>
-
 
       <InfoSection />
 

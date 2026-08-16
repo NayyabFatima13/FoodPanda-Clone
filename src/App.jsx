@@ -9,6 +9,7 @@ import Home from "./Pages/Home";
 import Restaurants from "./Pages/Restaurants";
 import Favorites from "./Pages/Favorites";
 import Cart from "./Pages/Cart";
+import RestaurantDetails from "./Pages/RestaurantDetails";
 
 import { useTheme } from "./Context/ThemeContext";
 
@@ -16,6 +17,7 @@ import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import Dashboard from "./Pages/Dashboard";
 import ProtectedRoute from "./Components/ProtectedRoute";
+
 
 function App() {
 
@@ -35,6 +37,11 @@ function App() {
           <Route
             path="/restaurants"
             element={<Restaurants />}
+          />
+
+          <Route
+            path="/restaurants/:id"
+            element={<RestaurantDetails />}
           />
 
           <Route

@@ -1,4 +1,5 @@
 import { useCart } from "../Context/CartContext";
+import { Link } from "react-router-dom";
 
 function Cart() {
 
@@ -10,98 +11,262 @@ function Cart() {
   } = useCart();
 
 
-  const total = cart.reduce(
+  // Subtotal
+  const subtotal = cart.reduce(
     (sum, item) =>
       sum + item.price * item.quantity,
     0
   );
 
 
+  // Delivery fee
+  const deliveryFee = cart.length > 0 ? 100 : 0;
+
+
+  // Total
+  const total = subtotal + deliveryFee;
+
+
+  // Empty cart
+  if (cart.length === 0) {
+
+    return (
+
+      <div className="cart-page empty-cart">
+
+        <div className="empty-cart-content">
+
+          <div className="empty-cart-icon">
+            🛒
+          </div>
+
+          <h1>
+            Your cart is empty
+          </h1>
+
+          <p>
+            Looks like you haven't added anything
+            to your cart yet.
+          </p>
+
+          <Link
+            to="/restaurants"
+            className="browse-restaurants-btn"
+          >
+            Browse Restaurants
+          </Link>
+
+        </div>
+
+      </div>
+
+    );
+
+  }
+
+
   return (
+
     <div className="cart-page">
 
-      <h1>My Cart 🛒</h1>
+      <div className="cart-container">
+
+        {/* Heading */}
+
+        <div className="cart-header">
+
+          <h1>
+            Your Cart 🛒
+          </h1>
+
+          <p>
+            {cart.length} item
+            {cart.length !== 1 ? "s" : ""}
+          </p>
+
+        </div>
 
 
-      {cart.length === 0 ? (
+        <div className="cart-layout">
 
-        <p>
-          Your cart is empty.
-        </p>
+          {/* LEFT SIDE */}
 
-      ) : (
+          <div className="cart-items">
 
-        <>
+            {cart.map((item) => (
 
-          {cart.map((item) => (
-
-            <div
-              className="cart-item"
-              key={item.id}
-            >
-
-              <div>
-
-                <h3>
-                  {item.name}
-                </h3>
-
-                <p>
-                  Rs. {item.price}
-                </p>
-
-              </div>
-
-
-              <div className="quantity-controls">
-
-                <button
-                  onClick={() =>
-                    decreaseQuantity(item.id)
-                  }
-                >
-                  -
-                </button>
-
-
-                <span>
-                  {item.quantity}
-                </span>
-
-
-                <button
-                  onClick={() =>
-                    increaseQuantity(item.id)
-                  }
-                >
-                  +
-                </button>
-
-              </div>
-
-
-              <button
-                onClick={() =>
-                  removeFromCart(item.id)
-                }
+              <div
+                className="cart-item"
+                key={item.id}
               >
-                Remove
-              </button>
+
+                {/* Image */}
+
+                <div className="cart-item-image">
+
+                  {item.image ? (
+
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                    />
+
+                  ) : (
+
+                    <div className="food-placeholder">
+                      🍔
+                    </div>
+
+                  )}
+
+                </div>
+
+
+                {/* Information */}
+
+                <div className="cart-item-info">
+
+                  <h3>
+                    {item.name}
+                  </h3>
+
+                  <p className="cart-item-price">
+                    Rs. {item.price}
+                  </p>
+
+
+                  {/* Quantity */}
+
+                  <div className="quantity-controls">
+
+                    <button
+                      onClick={() =>
+                        decreaseQuantity(item.id)
+                      }
+                    >
+                      −
+                    </button>
+
+                    <span>
+                      {item.quantity}
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        increaseQuantity(item.id)
+                      }
+                    >
+                      +
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                {/* Item total */}
+
+                <div className="cart-item-right">
+
+                  <strong>
+                    Rs.{" "}
+                    {item.price * item.quantity}
+                  </strong>
+
+                  <button
+                    className="remove-item"
+                    onClick={() =>
+                      removeFromCart(item.id)
+                    }
+                  >
+                    Remove
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+
+          {/* RIGHT SIDE */}
+
+          <div className="cart-summary">
+
+            <h2>
+              Order Summary
+            </h2>
+
+
+            <div className="summary-row">
+
+              <span>
+                Subtotal
+              </span>
+
+              <span>
+                Rs. {subtotal}
+              </span>
 
             </div>
 
-          ))}
+
+            <div className="summary-row">
+
+              <span>
+                Delivery fee
+              </span>
+
+              <span>
+                Rs. {deliveryFee}
+              </span>
+
+            </div>
 
 
-          <h2>
-            Total: Rs. {total}
-          </h2>
+            <hr />
 
-        </>
 
-      )}
+            <div className="summary-total">
+
+              <span>
+                Total
+              </span>
+
+              <strong>
+                Rs. {total}
+              </strong>
+
+            </div>
+
+
+            <button
+              className="checkout-btn"
+              onClick={() =>
+                alert("Checkout coming soon!")
+              }
+            >
+              Proceed to Checkout
+            </button>
+
+
+            <Link
+              to="/restaurants"
+              className="continue-shopping"
+            >
+              ← Continue Shopping
+            </Link>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
+
   );
 }
 

@@ -62,9 +62,6 @@ function Header({ searchText, setSearchText }) {
           Restaurants
         </Link> */}
 
-
-
-
         <NavLink
           to="/restaurants"
           className={({ isActive }) =>

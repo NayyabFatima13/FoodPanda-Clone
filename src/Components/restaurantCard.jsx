@@ -1,11 +1,20 @@
 import { Heart } from "lucide-react";
+import { useCart } from "../Context/CartContext";
 
 function RestaurantCard({
   restaurant,
   onFavorite,
   isFavorite
 }) {
+  const {
+    cart,
+    addToCart,
+    removeFromCart
+  } = useCart();
 
+  const isInCart = cart.some(
+    (item) => item.id === restaurant.id
+  );
   return (
 
     <div className="restaurant-card">
@@ -22,15 +31,21 @@ function RestaurantCard({
         {/* Favorite button */}
         <button
           className="favorite-button"
-          onClick={() => onFavorite(restaurant.id)}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            onFavorite(restaurant.id);
+          }}
         >
           <Heart
+            size={20}
             fill={isFavorite ? "red" : "none"}
             color={isFavorite ? "red" : "black"}
           />
         </button>
 
-        {/* Advertisement label */}
+        {/* Advertisement */}
         {restaurant.ad && (
           <span className="ad-label">
             Ad
@@ -57,7 +72,7 @@ function RestaurantCard({
 
 
         <p className="restaurant-meta">
-          From {restaurant.deliveryTime} min
+          From {restaurant.deliveryTime}
           {" · "}
           {restaurant.price}
           {" · "}
@@ -67,15 +82,37 @@ function RestaurantCard({
 
         <p className="delivery-info">
           🛵
-          <del>{restaurant.oldDelivery}</del>
           {" "}
-          <span>Free for first order</span>
+          <del>
+            {restaurant.oldDelivery}
+          </del>
+          {" "}
+          <span>
+            Free for first order
+          </span>
         </p>
 
 
         <span className="discount">
           ● {restaurant.discount}
         </span>
+
+        <button
+          className={`cart-action-btn ${isInCart ? "remove-cart-btn" : ""
+            }`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isInCart) {
+              removeFromCart(restaurant.id);
+            } else {
+              addToCart(restaurant);
+            }
+          }}
+        >
+          {isInCart ? "Remove from cart" : "Add to cart"}
+        </button>
 
       </div>
 

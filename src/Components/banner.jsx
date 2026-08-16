@@ -1,4 +1,5 @@
 import pandaBanner from "../assets/foodpanda-banner-logo.png";
+import { Link } from "react-router-dom";
 
 function Banner() {
   return (
@@ -12,9 +13,9 @@ function Banner() {
           on your first order
         </h1>
 
-        <button>
+        <Link to="/register" className="banner-button">
           Sign up
-        </button>
+        </Link>
 
       </div>
 

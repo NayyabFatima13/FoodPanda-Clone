@@ -1,31 +1,35 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import App from "./App.jsx";
+import App from "./App";
 
-import { CartProvider } from "./Context/CartContext";
-import { ThemeProvider } from "./Context/ThemeContext";
 import AuthProvider from "./Context/AuthContext";
+import CartProvider from "./Context/CartContext";
+import ThemeProvider from "./Context/ThemeContext";
+
+import "./App.css";
 
 
-createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(
+    document.getElementById("root")
+).render(
 
-  <StrictMode>
-    <AuthProvider>
-      
-      <ThemeProvider>
+    <React.StrictMode>
 
-        <CartProvider>
+        <AuthProvider>
 
-          <App />
+            <CartProvider>
 
-        </CartProvider>
+                <ThemeProvider>
 
-      </ThemeProvider>
+                    <App />
 
-    </AuthProvider>
-  </StrictMode>
+                </ThemeProvider>
+
+            </CartProvider>
+
+        </AuthProvider>
+
+    </React.StrictMode>
 
 );
-
-

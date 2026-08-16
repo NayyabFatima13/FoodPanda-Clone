@@ -1,52 +1,356 @@
-import { useNavigate } from "react-router-dom";
+import "../Styles/Dashboard.css";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
+import useLocalStorage from "../Hooks/useLocalStorage";
+import { useCart } from "../Context/CartContext";
+
+import {
+    ShoppingBag,
+    Heart,
+    MapPin,
+    Package,
+    Clock,
+    CheckCircle,
+} from "lucide-react";
+
+import Header from "../Components/header";
+
 function Dashboard() {
+    const [searchText, setSearchText] = useState("");
 
-    const { user, logout } = useAuth();
-
-    const navigate = useNavigate();
+    const { user } = useAuth();
 
 
-    const handleLogout = () => {
-
-        logout();
-
-        navigate("/login");
-    };
-
+    const [favorites] = useLocalStorage("favorites", []);
+    const { cart } = useCart();
+    const cartItemsCount = cart.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
     return (
-        <div className="dashboard">
+        <>
+            <Header
+                searchText={searchText}
+                setSearchText={setSearchText}
+            />
 
-            <h1>Welcome, {user?.name}! 👋</h1>
+            <main className="dashboard">
 
-            <p>
-                Welcome to your Foodpanda dashboard.
-            </p>
+                {/* Welcome */}
+                <section className="dashboard-welcome">
 
-            <div className="dashboard-card">
+                    <div>
+                        <h1>
+                            Welcome back, {user?.name} 👋
+                        </h1>
 
-                <h2>Account Information</h2>
+                        <p>
+                            Manage your orders, favorites and account
+                            from your dashboard.
+                        </p>
+                    </div>
 
-                <p>
-                    <strong>Name:</strong>{" "}
-                    {user?.name}
-                </p>
-
-                <p>
-                    <strong>Email:</strong>{" "}
-                    {user?.email}
-                </p>
-
-            </div>
+                </section>
 
 
-            <button onClick={handleLogout}>
-                Logout
-            </button>
+                {/* Statistics */}
+                <section className="dashboard-stats">
 
-        </div>
+                    {/* Total Orders */}
+                    <div className="dashboard-card">
+
+                        <Package size={28} />
+
+                        <div>
+                            <h3>0</h3>
+                            <p>Total Orders</p>
+                        </div>
+
+                    </div>
+
+
+                    {/* Active Orders */}
+                    <div className="dashboard-card">
+
+                        <Clock size={28} />
+
+                        <div>
+                            <h3>0</h3>
+                            <p>Active Orders</p>
+                        </div>
+
+                    </div>
+
+
+                    {/* Favorites */}
+                    <Link
+                        to="/favorites"
+                        className="dashboard-card dashboard-card-link"
+                    >
+
+                        <Heart size={28} />
+
+                        <div>
+                            <h3>{favorites.length}</h3>
+                            <p>Favorites</p>
+                        </div>
+
+                    </Link>
+
+
+                    {/* Cart */}
+                    <Link
+                        to="/cart"
+                        className="dashboard-card dashboard-card-link"
+                    >
+
+                        <ShoppingBag size={28} />
+
+                        <div>
+                            <h3>{cartItemsCount}</h3>
+                            <p>Cart Items</p>
+                        </div>
+
+                    </Link>
+
+                </section>
+
+                {/* Cart Content */}
+                <section className="dashboard-cart">
+
+                    <div className="dashboard-section-header">
+
+                        <h2>Your Cart</h2>
+
+                        <Link to="/cart">
+                            View Cart
+                        </Link>
+
+                    </div>
+
+
+                    {cart.length === 0 ? (
+
+                        <div className="dashboard-empty">
+
+                            <ShoppingBag size={35} />
+
+                            <h3>Your cart is empty</h3>
+
+                            <p>
+                                Add something delicious to your cart.
+                            </p>
+
+                            <Link to="/restaurants">
+                                Browse Restaurants
+                            </Link>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="dashboard-cart-items">
+
+                            {cart.slice(0, 3).map((item) => (
+
+                                <div
+                                    className="dashboard-cart-item"
+                                    key={item.id}
+                                >
+
+                                    <div>
+
+                                        <h3>
+                                            {item.name}
+                                        </h3>
+
+                                        <p>
+                                            Rs. {item.price}
+                                        </p>
+
+                                    </div>
+
+
+                                    <div className="dashboard-cart-quantity">
+
+                                        <span>
+                                            × {item.quantity}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    )}
+
+                </section>
+
+                {/* Dashboard Content */}
+                <section className="dashboard-content">
+
+
+                    {/* Sidebar */}
+                    <aside className="dashboard-sidebar">
+
+                        <Link
+                            to="/dashboard"
+                            className="dashboard-menu active"
+                        >
+                            <Package size={20} />
+                            Dashboard
+                        </Link>
+
+                        <Link
+                            to="/restaurants"
+                            className="dashboard-menu"
+                        >
+                            <ShoppingBag size={20} />
+                            Restaurants
+                        </Link>
+
+                        <Link
+                            to="/favorites"
+                            className="dashboard-menu"
+                        >
+                            <Heart size={20} />
+                            Favorites
+                        </Link>
+
+                        <Link
+                            to="/cart"
+                            className="dashboard-menu"
+                        >
+                            <ShoppingBag size={20} />
+                            Cart
+                        </Link>
+
+                        <button className="dashboard-menu">
+                            <MapPin size={20} />
+                            Addresses
+                        </button>
+
+                        <button className="dashboard-menu">
+                            ⚙️
+                            Account Settings
+                        </button>
+
+                    </aside>
+
+
+                    {/* Main Dashboard */}
+                    <div className="dashboard-main">
+
+                        <div className="dashboard-section-header">
+
+                            <h2>Recent Orders</h2>
+
+                            <Link to="/restaurants">
+                                Order Again
+                            </Link>
+
+                        </div>
+
+
+                        {/* Order 1 */}
+                        <div className="order-card">
+
+                            <div className="order-info">
+
+                                <div className="order-icon">
+                                    🍕
+                                </div>
+
+                                <div>
+
+                                    <h3>Pizza Hut</h3>
+
+                                    <p>
+                                        Large Pizza • 2 items
+                                    </p>
+
+                                    <span>
+                                        Order #10245
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="order-status">
+
+                                <CheckCircle size={18} />
+
+                                <span>
+                                    Delivered
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+                                Rs. 1,250
+                            </strong>
+
+                        </div>
+
+
+                        {/* Order 2 */}
+                        <div className="order-card">
+
+                            <div className="order-info">
+
+                                <div className="order-icon">
+                                    🍔
+                                </div>
+
+                                <div>
+
+                                    <h3>McDonald's</h3>
+
+                                    <p>
+                                        Burger • Fries • Drink
+                                    </p>
+
+                                    <span>
+                                        Order #10244
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="order-status preparing">
+
+                                <Clock size={18} />
+
+                                <span>
+                                    Preparing
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+                                Rs. 850
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </main>
+        </>
     );
 }
 

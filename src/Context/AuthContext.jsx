@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
 
@@ -16,36 +16,13 @@ function AuthProvider({ children }) {
     });
 
 
-    const login = (email, password) => {
-
-        const savedUser = localStorage.getItem("user");
-
-        if (!savedUser) {
-            return false;
-        }
-
-        const userData = JSON.parse(savedUser);
-
-        if (
-            userData.email === email &&
-            userData.password === password
-        ) {
-
-            setUser(userData);
-
-            return true;
-        }
-
-        return false;
-    };
-
-
-    const register = (name, email, password) => {
+    // REGISTER
+    const register = (userData) => {
 
         const newUser = {
-            name,
-            email,
-            password
+            name: userData.name,
+            email: userData.email,
+            password: userData.password
         };
 
         localStorage.setItem(
@@ -57,7 +34,49 @@ function AuthProvider({ children }) {
     };
 
 
+    // LOGIN
+    const login = (email, password) => {
+
+        const savedUser =
+            localStorage.getItem("user");
+
+        if (!savedUser) {
+
+            return {
+                success: false,
+                message:
+                    "No account found. Please register first."
+            };
+        }
+
+        const existingUser =
+            JSON.parse(savedUser);
+
+
+        if (
+            existingUser.email !== email ||
+            existingUser.password !== password
+        ) {
+
+            return {
+                success: false,
+                message: "Invalid email or password."
+            };
+        }
+
+
+        setUser(existingUser);
+
+        return {
+            success: true
+        };
+    };
+
+
+    // LOGOUT
     const logout = () => {
+
+        localStorage.removeItem("user");
 
         setUser(null);
     };
@@ -67,8 +86,8 @@ function AuthProvider({ children }) {
         <AuthContext.Provider
             value={{
                 user,
-                login,
                 register,
+                login,
                 logout
             }}
         >
@@ -79,7 +98,9 @@ function AuthProvider({ children }) {
 
 
 export function useAuth() {
+
     return useContext(AuthContext);
+
 }
 
 

@@ -146,3 +146,5 @@ export function useCart() {
   return useContext(CartContext);
 
 }
+
+export default CartProvider;
