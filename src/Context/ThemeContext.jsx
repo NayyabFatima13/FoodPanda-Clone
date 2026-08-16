@@ -1,48 +1,65 @@
 import {
-  createContext,
-  useContext,
-  useState
+    createContext,
+    useContext,
+    useReducer
 } from "react";
+
+import {
+    themeReducer,
+    initialState
+} from "./reducers/themeReducer";
+
 
 const ThemeContext = createContext();
 
+
 export function ThemeProvider({ children }) {
 
-  const [theme, setTheme] = useState("light");
+    const [state, dispatch] = useReducer(
+        themeReducer,
+        initialState
+    );
 
 
-  const toggleTheme = () => {
+    const toggleTheme = () => {
 
-    setTheme((previousTheme) => {
+        dispatch({
+            type: "TOGGLE_THEME"
+        });
 
-      if (previousTheme === "light") {
-        return "dark";
-      }
-
-      return "light";
-
-    });
-
-  };
+    };
 
 
-  return (
-    <ThemeContext.Provider
-      value={{
-        theme,
-        toggleTheme
-      }}
-    >
-      {children}
-    </ThemeContext.Provider>
-  );
+    const setTheme = (theme) => {
+
+        dispatch({
+            type: "SET_THEME",
+            payload: theme
+        });
+
+    };
+
+
+    return (
+        <ThemeContext.Provider
+            value={{
+                theme: state.theme,
+                toggleTheme,
+                setTheme
+            }}
+        >
+            {children}
+        </ThemeContext.Provider>
+    );
 
 }
 
 
 export function useTheme() {
 
-  return useContext(ThemeContext);
+    return useContext(ThemeContext);
 
 }
+
+
 export default ThemeProvider;

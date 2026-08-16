@@ -1,19 +1,24 @@
-import { createContext, useContext, useState } from "react";
+import {
+    createContext,
+    useContext,
+    useReducer
+} from "react";
+
+import {
+    authReducer,
+    initialState
+} from "./reducers/authReducer";
+
 
 const AuthContext = createContext(null);
 
+
 function AuthProvider({ children }) {
 
-    const [user, setUser] = useState(() => {
-
-        const savedUser = localStorage.getItem("user");
-
-        if (savedUser) {
-            return JSON.parse(savedUser);
-        }
-
-        return null;
-    });
+    const [state, dispatch] = useReducer(
+        authReducer,
+        initialState
+    );
 
 
     // REGISTER
@@ -25,12 +30,17 @@ function AuthProvider({ children }) {
             password: userData.password
         };
 
+
         localStorage.setItem(
             "user",
             JSON.stringify(newUser)
         );
 
-        setUser(newUser);
+
+        dispatch({
+            type: "REGISTER",
+            payload: newUser
+        });
     };
 
 
@@ -40,6 +50,7 @@ function AuthProvider({ children }) {
         const savedUser =
             localStorage.getItem("user");
 
+
         if (!savedUser) {
 
             return {
@@ -48,6 +59,7 @@ function AuthProvider({ children }) {
                     "No account found. Please register first."
             };
         }
+
 
         const existingUser =
             JSON.parse(savedUser);
@@ -60,12 +72,17 @@ function AuthProvider({ children }) {
 
             return {
                 success: false,
-                message: "Invalid email or password."
+                message:
+                    "Invalid email or password."
             };
         }
 
 
-        setUser(existingUser);
+        dispatch({
+            type: "LOGIN",
+            payload: existingUser
+        });
+
 
         return {
             success: true
@@ -78,14 +95,17 @@ function AuthProvider({ children }) {
 
         localStorage.removeItem("user");
 
-        setUser(null);
+
+        dispatch({
+            type: "LOGOUT"
+        });
     };
 
 
     return (
         <AuthContext.Provider
             value={{
-                user,
+                user: state.user,
                 register,
                 login,
                 logout

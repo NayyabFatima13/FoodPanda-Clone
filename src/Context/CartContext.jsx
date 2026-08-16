@@ -1,138 +1,87 @@
 import {
   createContext,
-  useContext
+  useContext,
+  useEffect,
+  useReducer,
 } from "react";
 
-import useLocalStorage from "../Hooks/useLocalStorage";
-
+import {
+  cartReducer,
+  initialState,
+} from "./reducers/cartReducer";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
 
-  const [cart, setCart] = useLocalStorage("cart", []);
+  const [state, dispatch] = useReducer(
+    cartReducer,
+    initialState
+  );
+
+  // Save cart whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(state.cart)
+    );
+  }, [state.cart]);
 
 
-  // Add food to cart
+  // ADD FOOD
   const addToCart = (food) => {
-
-    setCart((previousCart) => {
-
-      const existingItem = previousCart.find(
-        (item) => item.id === food.id
-      );
-
-      // If item already exists
-      if (existingItem) {
-
-        return previousCart.map((item) => {
-
-          if (item.id === food.id) {
-
-            return {
-              ...item,
-              quantity: item.quantity + 1
-            };
-
-          }
-
-          return item;
-
-        });
-
-      }
-
-
-      // If item doesn't exist
-      return [
-        ...previousCart,
-        {
-          ...food,
-          quantity: 1
-        }
-      ];
-
+    dispatch({
+      type: "ADD_TO_CART",
+      payload: food,
     });
-
   };
 
 
-  // Remove food completely
+  // REMOVE FOOD
   const removeFromCart = (id) => {
-
-    setCart((previousCart) => {
-
-      return previousCart.filter(
-        (item) => item.id !== id
-      );
-
+    dispatch({
+      type: "REMOVE_FROM_CART",
+      payload: id,
     });
-
   };
 
 
-  // Increase quantity
+  // INCREASE QUANTITY
   const increaseQuantity = (id) => {
-
-    setCart((previousCart) => {
-
-      return previousCart.map((item) => {
-
-        if (item.id === id) {
-
-          return {
-            ...item,
-            quantity: item.quantity + 1
-          };
-
-        }
-
-        return item;
-
-      });
-
+    dispatch({
+      type: "INCREASE_QUANTITY",
+      payload: id,
     });
-
   };
 
 
-  // Decrease quantity
+  // DECREASE QUANTITY
   const decreaseQuantity = (id) => {
-
-    setCart((previousCart) => {
-
-      return previousCart
-        .map((item) => {
-
-          if (item.id === id) {
-
-            return {
-              ...item,
-              quantity: item.quantity - 1
-            };
-
-          }
-
-          return item;
-
-        })
-        .filter(
-          (item) => item.quantity > 0
-        );
-
+    dispatch({
+      type: "DECREASE_QUANTITY",
+      payload: id,
     });
+  };
 
+
+  // CLEAR CART
+  const clearCart = () => {
+    dispatch({
+      type: "CLEAR_CART",
+    });
   };
 
 
   return (
     <CartContext.Provider
       value={{
-        cart,
+        cart: state.cart,
+
         addToCart,
         removeFromCart,
         increaseQuantity,
-        decreaseQuantity
+        decreaseQuantity,
+        clearCart,
       }}
     >
       {children}
@@ -142,9 +91,8 @@ export function CartProvider({ children }) {
 
 
 export function useCart() {
-
   return useContext(CartContext);
-
 }
+
 
 export default CartProvider;
