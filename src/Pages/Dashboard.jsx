@@ -1,10 +1,10 @@
 import "../Styles/Dashboard.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+
+import { useSelector } from "react-redux";
 
 import useLocalStorage from "../Hooks/useLocalStorage";
-import { useCart } from "../Context/CartContext";
 
 import {
     ShoppingBag,
@@ -20,13 +20,23 @@ import Header from "../Components/header";
 function Dashboard() {
     const [searchText, setSearchText] = useState("");
 
-    const { user } = useAuth();
+    const user = useSelector(
+    (state) => state.auth.user
+);
 
 
-    const [favorites] = useLocalStorage("favorites", []);
-    const { cart } = useCart();
+    const [favorites] =
+        useLocalStorage("favorites", []);
+
+
+    const cart = useSelector(
+        (state) => state.cart.cart
+    );
+
+
     const cartItemsCount = cart.reduce(
-        (total, item) => total + item.quantity,
+        (total, item) =>
+            total + item.quantity,
         0
     );
 

@@ -4,6 +4,7 @@ import {
   Route
 } from "react-router-dom";
 
+import { useSelector } from "react-redux";
 
 import Home from "./Pages/Home";
 import Restaurants from "./Pages/Restaurants";
@@ -18,10 +19,10 @@ import Register from "./Pages/Register";
 import Dashboard from "./Pages/Dashboard";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
-
 function App() {
 
-  const { theme } = useTheme();
+  const theme = useSelector((state) => state.theme.theme);
+
   return (
     <BrowserRouter>
 
@@ -64,14 +65,9 @@ function App() {
             element={<Register />}
           />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
 
         </Routes>
 

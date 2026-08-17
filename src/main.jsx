@@ -1,22 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+// import React from "react";
+// import ReactDOM from "react-dom/client";
 
-import App from "./App";
+// import App from "./App";
+// import CartProvider from "./Context/CartContext";
 
-import AuthProvider from "./Context/AuthContext";
-import CartProvider from "./Context/CartContext";
-import ThemeProvider from "./Context/ThemeContext";
+// import "./App.css";
 
-import "./App.css";
-
-
-ReactDOM.createRoot(
-    document.getElementById("root")
-).render(
-
-    <React.StrictMode>
-
-        <AuthProvider>
+{/* <AuthProvider>
 
             <CartProvider>
 
@@ -28,7 +18,28 @@ ReactDOM.createRoot(
 
             </CartProvider>
 
-        </AuthProvider>
+        </AuthProvider> */}
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import { Provider } from "react-redux";
+
+import App from "./App";
+import store from "./redux/store";
+
+
+import "./App.css";
+
+ReactDOM.createRoot(
+    document.getElementById("root")
+).render(
+
+    <React.StrictMode>
+
+        <Provider store={store}>
+            <App />
+        </Provider>
 
     </React.StrictMode>
 

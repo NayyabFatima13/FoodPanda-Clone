@@ -1,25 +1,41 @@
 import { Heart } from "lucide-react";
-import { useCart } from "../Context/CartContext";
+
+import {
+  useDispatch,
+  useSelector
+} from "react-redux";
+
+import {
+  addToCart,
+  removeFromCart
+} from "../redux/slices/cartSlice";
+
 
 function RestaurantCard({
   restaurant,
   onFavorite,
   isFavorite
 }) {
-  const {
-    cart,
-    addToCart,
-    removeFromCart
-  } = useCart();
+
+  const dispatch = useDispatch();
+
+
+  const cart = useSelector(
+    (state) => state.cart.cart
+  );
+
 
   const isInCart = cart.some(
     (item) => item.id === restaurant.id
   );
+
+
   return (
 
     <div className="restaurant-card">
 
       {/* Restaurant Image */}
+
       <div className="restaurant-image-container">
 
         <img
@@ -28,34 +44,45 @@ function RestaurantCard({
           className="restaurant-image"
         />
 
+
         {/* Favorite button */}
+
         <button
           className="favorite-button"
           onClick={(event) => {
+
             event.preventDefault();
             event.stopPropagation();
 
             onFavorite(restaurant.id);
+
           }}
         >
+
           <Heart
             size={20}
             fill={isFavorite ? "red" : "none"}
             color={isFavorite ? "red" : "black"}
           />
+
         </button>
 
+
         {/* Advertisement */}
+
         {restaurant.ad && (
+
           <span className="ad-label">
             Ad
           </span>
+
         )}
 
       </div>
 
 
       {/* Restaurant Information */}
+
       <div className="restaurant-info">
 
         <div className="restaurant-title-row">
@@ -72,24 +99,30 @@ function RestaurantCard({
 
 
         <p className="restaurant-meta">
+
           From {restaurant.deliveryTime}
           {" · "}
           {restaurant.price}
           {" · "}
           {restaurant.cuisine}
+
         </p>
 
 
         <p className="delivery-info">
-          🛵
-          {" "}
+
+          🛵{" "}
+
           <del>
             {restaurant.oldDelivery}
           </del>
+
           {" "}
+
           <span>
             Free for first order
           </span>
+
         </p>
 
 
@@ -97,21 +130,39 @@ function RestaurantCard({
           ● {restaurant.discount}
         </span>
 
+
         <button
-          className={`cart-action-btn ${isInCart ? "remove-cart-btn" : ""
-            }`}
+          className={`cart-action-btn ${
+            isInCart ? "remove-cart-btn" : ""
+          }`}
+
           onClick={(e) => {
+
             e.preventDefault();
             e.stopPropagation();
 
+
             if (isInCart) {
-              removeFromCart(restaurant.id);
+
+              dispatch(
+                removeFromCart(restaurant.id)
+              );
+
             } else {
-              addToCart(restaurant);
+
+              dispatch(
+                addToCart(restaurant)
+              );
+
             }
+
           }}
         >
-          {isInCart ? "Remove from cart" : "Add to cart"}
+
+          {isInCart
+            ? "Remove from cart"
+            : "Add to cart"}
+
         </button>
 
       </div>
@@ -119,5 +170,6 @@ function RestaurantCard({
     </div>
   );
 }
+
 
 export default RestaurantCard;

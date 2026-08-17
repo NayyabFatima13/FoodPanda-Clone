@@ -17,14 +17,18 @@ import { useFormik } from "formik";
 
 import * as Yup from "yup";
 
-import { useAuth } from "../Context/AuthContext";
+import { useDispatch } from "react-redux";
+
+import {
+    login
+} from "../redux/slices/authSlice";
 
 
 function Login() {
 
     const navigate = useNavigate();
 
-    const { login } = useAuth();
+    const dispatch = useDispatch();
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -60,21 +64,26 @@ function Login() {
 
             setLoginError("");
 
-            const result = login(
-                values.email,
-                values.password
+            const result = dispatch(
+                login(
+                    values.email,
+                    values.password
+                )
             );
 
 
             if (!result.success) {
 
-                setLoginError(result.message);
+                setLoginError(
+                    result.message
+                );
 
                 return;
             }
 
 
             navigate("/dashboard");
+
         }
 
     });

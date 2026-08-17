@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
 
-import { useTheme } from "../Context/ThemeContext";
+import { logout } from "../redux/slices/authSlice";
+
+import { toggleTheme } from "../redux/slices/themeSlice";
 
 
 import {
@@ -23,11 +25,17 @@ import foodpandaLogo from "../assets/foodpanda-logo-horizontal.png";
 
 function Header({ searchText, setSearchText }) {
 
-  const { user, logout } = useAuth();
+  const user = useSelector(
+    (state) => state.auth.user
+  );
+
+  const dispatch = useDispatch();
+
+  const theme = useSelector(
+    (state) => state.theme.theme
+  );
+
   const navigate = useNavigate();
-
-  const { theme, toggleTheme } = useTheme();
-
 
   return (
     <header>
@@ -57,11 +65,6 @@ function Header({ searchText, setSearchText }) {
 
         </div>
 
-        {/* <Link to="/restaurants"
-          className="restaurants-link">
-          Restaurants
-        </Link> */}
-
         <NavLink
           to="/restaurants"
           className={({ isActive }) =>
@@ -89,8 +92,11 @@ function Header({ searchText, setSearchText }) {
               <button
                 className="logout-btn"
                 onClick={() => {
-                  logout();
+
+                  dispatch(logout());
+
                   navigate("/");
+
                 }}
               >
                 Logout
@@ -129,7 +135,7 @@ function Header({ searchText, setSearchText }) {
           {/* Theme */}
           <button
             className="theme-btn"
-            onClick={toggleTheme}
+            onClick={() => dispatch(toggleTheme())}
           >
             {theme === "light" ? "🌙" : "☀️"}
           </button>

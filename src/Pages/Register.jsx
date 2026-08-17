@@ -17,14 +17,18 @@ import { useFormik } from "formik";
 
 import * as Yup from "yup";
 
-import { useAuth } from "../Context/AuthContext";
+import { useDispatch } from "react-redux";
+
+import {
+    register
+} from "../redux/slices/authSlice";
 
 
 function Register() {
 
     const navigate = useNavigate();
 
-    const { register } = useAuth();
+    const dispatch = useDispatch();
 
 
     const [showPassword, setShowPassword] =
@@ -110,7 +114,9 @@ function Register() {
 
         onSubmit: (values) => {
 
-            register(values);
+            dispatch(
+                register(values)
+            );
 
             navigate("/dashboard");
 

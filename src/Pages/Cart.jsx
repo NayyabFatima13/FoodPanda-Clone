@@ -1,15 +1,20 @@
-import { useCart } from "../Context/CartContext";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  increaseQuantity,
+  decreaseQuantity,
+  removeFromCart
+} from "../redux/slices/cartSlice";
+
 
 function Cart() {
 
-  const {
-    cart,
-    increaseQuantity,
-    decreaseQuantity,
-    removeFromCart
-  } = useCart();
+  const cart = useSelector(
+    (state) => state.cart.cart
+  );
 
+  const dispatch = useDispatch();
 
   // Subtotal
   const subtotal = cart.reduce(
@@ -141,7 +146,9 @@ function Cart() {
 
                     <button
                       onClick={() =>
-                        decreaseQuantity(item.id)
+                        dispatch(
+                          decreaseQuantity(item.id)
+                        )
                       }
                     >
                       −
@@ -153,7 +160,9 @@ function Cart() {
 
                     <button
                       onClick={() =>
-                        increaseQuantity(item.id)
+                        dispatch(
+                          increaseQuantity(item.id)
+                        )
                       }
                     >
                       +
@@ -176,7 +185,9 @@ function Cart() {
                   <button
                     className="remove-item"
                     onClick={() =>
-                      removeFromCart(item.id)
+                      dispatch(
+                        removeFromCart(item.id)
+                      )
                     }
                   >
                     Remove

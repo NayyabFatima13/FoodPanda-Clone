@@ -1,10 +1,15 @@
-import { useCart } from "../Context/CartContext";
+import { useDispatch } from "react-redux";
+
+import { addToCart } from "../redux/slices/cartSlice";
+
 
 function Menu({ restaurant }) {
 
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
+
 
   return (
+
     <div className="menu">
 
       <h2>
@@ -35,7 +40,9 @@ function Menu({ restaurant }) {
 
 
             <button
-              onClick={() => addToCart(food)}
+              onClick={() =>
+                dispatch(addToCart(food))
+              }
             >
               Add
             </button>
@@ -49,5 +56,6 @@ function Menu({ restaurant }) {
     </div>
   );
 }
+
 
 export default Menu;
